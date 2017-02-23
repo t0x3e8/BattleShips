@@ -2,8 +2,10 @@ var express = require('express');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
-    res.render('index', { title: 'Battle Ships' });
+router.get('/', function (req, res) {
+    'use strict'
+
+    res.render('index', { title: 'ADMIRAL' });
 });
 
 module.exports = router;
