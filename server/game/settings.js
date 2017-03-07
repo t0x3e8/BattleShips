@@ -22,7 +22,24 @@ var settings = {
             [2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 2, 2],
             [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
         ]
-    }
+    },
+    pawns: [
+        {
+            typeId: 1,
+            name: 'Uboot',
+            range: 2,
+            destroy: [2],
+            destroyedBy: [2]
+        },
+        {
+            typeId: 2,
+            name: 'Destroyer',
+            range: 4,
+            destroy: [1],
+            destroyedBy: [1]
+        }
+
+    ]
 }
 
 module.exports = settings;
