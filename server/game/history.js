@@ -8,11 +8,15 @@ var uuid = require('uuid/v1');
  */
 function History() {
     'use strict'
-    // var that = this;
 
-    this.historyId = uuid();
+    var historyId = uuid();
+
     this.records = [];
     this.turn = 0;
+
+    this.getHistoryId = function () {
+        return historyId;
+    };
 }
 
 History.prototype.init = function (players) {

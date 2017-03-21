@@ -23,8 +23,8 @@ function Game() {
     var that = this;
     var state = GameState.NotStarted;
     var oldState = GameState.NotStarted;
+    var gameId = uuid();
     
-    this.gameId = uuid();
     this.board = null;
     this.history = null;
     this.players = [];
@@ -32,10 +32,10 @@ function Game() {
     this.setState = function (newState) {
         var gameResult = 0;
 
-        that.oldState = that.state;
-        that.state = newState;
+        oldState = state;
+        state = newState;
 
-        if (that.state === GameState.Started) {
+        if (state === GameState.Started) {
             // initialize History and Board. Let players know that turn started and wait.
             that.history = new History();
             that.history.init(that.players);
@@ -43,19 +43,19 @@ function Game() {
             that.board.init(that.players[0], that.players[1]);
 
             that.setState(GameState.Waiting);
-        } else if (that.state === GameState.Waiting) {
+        } else if (state === GameState.Waiting) {
             // TODO: Set timer where an email can be send to users with reminder
             that.notifyPlayers();
-        } else if (that.state === GameState.Turn) {
+        } else if (state === GameState.Turn) {
             // Let Board to process the turn and save output in the history
             gameResult = that.board.processTurn(that.players[0], that.players[1]);
             that.history.pushTurn(that.players[0], that.players[1]);
 
             gameResult === 0 ? that.setState(GameState.Waiting) : that.setState(GameState.Ended);
-        } else if (that.state === GameState.Ended) {
+        } else if (state === GameState.Ended) {
             that.history.end(gameResult);
         }
-    }
+    };
 
     this.commitTurn = function () {
         var isTurnCommitted = that.players[0].isReady() && that.players[1].isReady();
@@ -63,6 +63,14 @@ function Game() {
         if (isTurnCommitted) {
             that.setState(GameState.Turn);
         }
+    };
+
+    this.getGameId = function () {
+        return gameId;
+    };
+
+    this.getState = function () {
+        return state;
     }
 }
 

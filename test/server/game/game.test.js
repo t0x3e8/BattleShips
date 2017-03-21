@@ -30,19 +30,21 @@ describe('Game requirements', sinon.test(function () {
     it('Create a board of 12 columns and 18 rows.', sinon.test(function () {
         var board = new Board();
 
-        expect(board.boardId).to.not.be.empty;
+        expect(board.getBoardId()).to.not.be.empty;
         expect(board.fields[17][11]).to.not.be.empty;
     }));
 
-    it('Make available to twp players to join the game with a random set of pawns.', sinon.test(function () {
+    it('Make available to two players to join the game with a random set of pawns.', sinon.test(function () {
         var game = new Game();
         game.join(player1);
         game.join(player2);
 
         game.start();
-
+        
+        expect(game.getGameId()).to.not.be.null;
         expect(game.history).to.not.be.null;
-        expect(game.history.historyId).to.not.be.empty;
+        expect(game.history.getHistoryId()).to.not.be.empty;
+        expect(game.getState()).to.be.equal(2);  // 2 indicates waiting
     }));
 
     it('Let both users execute their moves with recording history.', sinon.test(function () {

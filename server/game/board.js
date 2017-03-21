@@ -1,4 +1,5 @@
-/* eslint func-style : ["error", "declaration"]
+/* eslint func-style : ["error", "declaration"],
+    no-unused-vars : ["error", { "varsIgnorePattern" : "^boardId"}]
 */
 var uuid = require('uuid/v1');
 var settings = require('./settings');
@@ -10,12 +11,16 @@ var settings = require('./settings');
  */
 function Board() {
     'use strict'
-    // var that = this;
 
-    this.boardId = uuid();
+    var boardId = uuid();
+
     this.fields = settings.board.map;
     this.oldPawnsSet1 = [];
     this.oldPawnsSet2 = [];
+
+    this.getBoardId = function () {
+        return boardId;
+    };
 }
 
 /**
