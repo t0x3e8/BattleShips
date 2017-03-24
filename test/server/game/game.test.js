@@ -6,6 +6,13 @@ var Game = require('../../../server/game/game');
 var Board = require('../../../server/game/board');
 var Player = require('../../../server/game/player');
 var Pawn = require('../../../server/game/pawn');
+var GameState = {
+    NotStarted: 0,
+    Started: 1,
+    Waiting: 2,
+    Turn: 3,
+    Ended: 4
+}
 
 describe('Game requirements', sinon.test(function () {
     var player1 = null;
@@ -40,29 +47,44 @@ describe('Game requirements', sinon.test(function () {
         game.join(player2);
 
         game.start();
-        
+
         expect(game.getGameId()).to.not.be.null;
         expect(game.history).to.not.be.null;
         expect(game.history.getHistoryId()).to.not.be.empty;
-        expect(game.getState()).to.be.equal(2);  // 2 indicates waiting
+        expect(game.getState()).to.be.equal(GameState.Waiting);
     }));
 
-    it('Let both users execute their moves with recording history.', sinon.test(function () {
+    it('Let both users execute their moves with recording history.', sinon.test(function (done) {
         var game = new Game();
-        game.join(player1);
-        game.join(player2);
-        game.start(function () {
-            pawnSet1[0].positionIndex = 4;
+        var numberOfTurns = 5;
+        var turn = function () {
+            numberOfTurns = numberOfTurns - 1;
+            if (numberOfTurns === 0) {
+                sinon.stub(game.board, "determineGameResult").returns(1);
+            }
+
+            expect(player1.isReady()).to.be.false;
+            pawnSet1[0].positionIndex = pawnSet1[0].positionIndex + 1;
             player1.setPawns(pawnSet1);
             player1.endTurn();
 
-            pawnSet2[1].positionIndex = 5;
+            expect(player2.isReady()).to.be.false;
+            pawnSet2[1].positionIndex = pawnSet2[1].positionIndex + 1;
             player2.setPawns(pawnSet2);
             player2.endTurn();
-        });
-    }));
+        };
+        game.join(player1);
+        game.join(player2);
 
-    it.skip('Let history inform both player (as event, callback) when is time for the next turn', sinon.test(function () {
+        game.on('gameAwaiting', turn);
+        game.on('gameStarted', turn);
+        game.on('gameEnded', function () {
+            expect(game.history.getTurnNumber()).to.be.equal(7);
+            expect(game.history.getTurn(game.history.getTurnNumber())).to.not.be.null;
+            expect(game.history.getTurn(game.history.getTurnNumber()).result).to.be.equal(1); //player 1 wins
+            done();
+        })
+        game.start();
 
     }));
 

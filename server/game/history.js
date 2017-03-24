@@ -10,42 +10,44 @@ function History() {
     'use strict'
 
     var historyId = uuid();
+    var that = this;
 
     this.records = [];
-    this.turn = 0;
 
     this.getHistoryId = function () {
         return historyId;
     };
-}
 
-History.prototype.init = function (players) {
-    'use strict';
-    var record = null;
-
-    if (players && players.length === 2) {
-        record = this.createRecord(0, players);
-
-        this.records.push(record);
+    this.getTurnNumber = function () {
+        return that.records.length;
     }
 }
 
-History.prototype.end = function (data) {
+History.prototype.end = function (result, playerId) {
     'use strict';
 
-    // setup flag that the hisotyr is closed
+    this.records.push({
+        result: result,
+        player: playerId
+    });
 }
 
 History.prototype.pushTurn = function (player1, player2) {
     'use strict'
 
-    // uses createRecord method to create entry and pushes it to history
+    var record = null;
+
+    if (player1 && player2) {
+        record = this.createRecord(player1, player2);
+
+        this.records.push(record);
+    }
 }
 
 History.prototype.getTurn = function (turnNumber) {
     'use strict';
 
-    // fetches a turn from the set
+    return this.records[turnNumber - 1];
 }
 
 History.prototype.loadHistory = function (history) {
@@ -54,13 +56,12 @@ History.prototype.loadHistory = function (history) {
     // load history from file
 }
 
-History.prototype.createRecord = function (turn, players) {
+History.prototype.createRecord = function (turn, player1, player2) {
     'use strict';
 
     return {
-        turn: turn,
-        player1: players[0],
-        player2: players[1]
+        player1: player1,
+        player2: player2
     }
 }
 

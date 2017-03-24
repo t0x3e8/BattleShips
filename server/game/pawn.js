@@ -9,11 +9,15 @@ var uuid = require('uuid/v1');
  */
 function Pawn(pawnData) {
     'use strict'
-    // var that = this;
 
-    this.pawnId = uuid();
+    var pawnId = uuid();
+    
     this.type = pawnData.type;
     this.positionIndex = pawnData.positionIndex;
+
+    this.getPawnId = function () {
+        return pawnId;
+    }
 }
 
 Pawn.NOSHIP = 0;

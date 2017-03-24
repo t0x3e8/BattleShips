@@ -14,11 +14,16 @@ var PlayerState = {
 function Player(playerData) {
     'use strict'
 
-    this.playerId = uuid();
+    var playerId = uuid();
+    
     this.name = playerData.name;
     this.pawns = [];
     this.state = PlayerState.Stopped;
     this.turnCommitCallback = null;
+
+    this.getPlayerId = function () {
+        return playerId;
+    }
 }
 
 /**

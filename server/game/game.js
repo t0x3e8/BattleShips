@@ -2,6 +2,9 @@
     func-style : ["error", "declaration"],
     no-unused-vars : ["error", { "varsIgnorePattern" : "tate$"}]
 */
+/* global Reflect */
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
 var uuid = require('uuid/v1');
 var Board = require('./board.js');
 var History = require('./history.js');
@@ -24,36 +27,44 @@ function Game() {
     var state = GameState.NotStarted;
     var oldState = GameState.NotStarted;
     var gameId = uuid();
-    
+    var gameResult = 0;
+
     this.board = null;
     this.history = null;
     this.players = [];
 
-    this.setState = function (newState) {
-        var gameResult = 0;
+    Reflect.apply(EventEmitter, this, [])
 
+    this.setState = function (newState) {
         oldState = state;
         state = newState;
 
         if (state === GameState.Started) {
             // initialize History and Board. Let players know that turn started and wait.
             that.history = new History();
-            that.history.init(that.players);
+            that.history.pushTurn(that.players[0], that.players[1]);
             that.board = new Board();
             that.board.init(that.players[0], that.players[1]);
 
             that.setState(GameState.Waiting);
+            that.emit('gameStarted');
         } else if (state === GameState.Waiting) {
             // TODO: Set timer where an email can be send to users with reminder
             that.notifyPlayers();
+            that.emit('gameAwaiting');
         } else if (state === GameState.Turn) {
+            that.emit('gameTurnProcessing');
             // Let Board to process the turn and save output in the history
-            gameResult = that.board.processTurn(that.players[0], that.players[1]);
             that.history.pushTurn(that.players[0], that.players[1]);
 
-            gameResult === 0 ? that.setState(GameState.Waiting) : that.setState(GameState.Ended);
+            gameResult = that.board.processTurn(that.players[0], that.players[1]);
+            gameResult === 0 ? that.setState(GameState.Waiting) : that.setState(GameState.Ended, gameResult);
+            that.emit('gameTurnProcessed')
         } else if (state === GameState.Ended) {
-            that.history.end(gameResult);
+            that.history.end(gameResult,
+                gameResult === 1 ? that.players[0].getPlayerId() : that.players[1].getPlayerId()
+            );
+            that.emit('gameEnded');
         }
     };
 
@@ -74,6 +85,9 @@ function Game() {
     }
 }
 
+util.inherits(Game, EventEmitter);
+
+
 /**
  * A method which allows to add new use to the game.
  * @param {object} player - should represent Player object
@@ -90,18 +104,14 @@ Game.prototype.join = function (player) {
  * @param {function} exec - callback function when game is started
  * @return {void}
  */
-Game.prototype.start = function (exec) {
+Game.prototype.start = function () {
     'use strict'
 
     if (this.players.length === 2) {
         this.setState(GameState.Started);
-
-        if (exec) {
-            exec();
-        }
     }
 }
-    
+
 Game.prototype.notifyPlayers = function () {
     'use strict';
     var commitTurnCallback = this.commitTurn;
