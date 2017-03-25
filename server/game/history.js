@@ -10,19 +10,23 @@ function History() {
     'use strict'
 
     var historyId = uuid();
-    var that = this;
 
     this.records = [];
-
+    
+    /**
+     * @returns {uuid} gets unique history id
+     */
     this.getHistoryId = function () {
         return historyId;
     };
-
-    this.getTurnNumber = function () {
-        return that.records.length;
-    }
 }
 
+/**
+ * Should be called when there is no more turns in the game and history can be called.
+ * @param {number} result 0 - unresolved, 1 - player 1 wins, 2 - player 2 wins
+ * @param {uuid} playerId uuid of winning player 
+ * @return {void}
+ */
 History.prototype.end = function (result, playerId) {
     'use strict';
 
@@ -32,6 +36,12 @@ History.prototype.end = function (result, playerId) {
     });
 }
 
+/**
+ * Should be called to record a turn setup
+ * @param {Player} player1 Player number 1
+ * @param {Player} player2 Player number 2
+ * @returns {void}
+ */
 History.prototype.pushTurn = function (player1, player2) {
     'use strict'
 
@@ -44,19 +54,37 @@ History.prototype.pushTurn = function (player1, player2) {
     }
 }
 
+/**
+ * Gets the specific turn records
+ * @param {number} turnNumber Number of the turn, when the first turn is 1
+ * @return {object} Specific turn
+ */
 History.prototype.getTurn = function (turnNumber) {
     'use strict';
 
     return this.records[turnNumber - 1];
 }
 
-History.prototype.loadHistory = function (history) {
-    'use strict';
 
-    // load history from file
-}
+// History.prototype.saveHistory = function (history) {
+//     'use strict';
 
-History.prototype.createRecord = function (turn, player1, player2) {
+//     // save history to file
+// }
+
+// History.prototype.loadHistory = function (history) {
+//     'use strict';
+
+//     // load history from file
+// }
+
+/**
+ * Helper method to create record
+ * @param {Player} player1 Player number 1
+ * @param {Player} player2 Player number 2
+ * @return {object} new record
+ */
+History.prototype.createRecord = function (player1, player2) {
     'use strict';
 
     return {

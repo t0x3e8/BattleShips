@@ -18,6 +18,9 @@ function Board() {
     this.oldPawnsSet1 = [];
     this.oldPawnsSet2 = [];
 
+    /**
+     * @returns {uuid} gets unique board id
+     */
     this.getBoardId = function () {
         return boardId;
     };

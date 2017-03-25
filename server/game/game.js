@@ -35,6 +35,11 @@ function Game() {
 
     Reflect.apply(EventEmitter, this, [])
 
+    /**
+     * SetState method manages the game state which can be: NotStarted:0, Started:1, Waiting:2, Turn:3, Ended:4
+     * @param {GameState} newState parameter representing the new game state
+     * @return {void}
+     */
     this.setState = function (newState) {
         oldState = state;
         state = newState;
@@ -49,8 +54,9 @@ function Game() {
             that.setState(GameState.Waiting);
             that.emit('gameStarted');
         } else if (state === GameState.Waiting) {
-            // TODO: Set timer where an email can be send to users with reminder
+            // TODO: Set timer to send an email notification after a while
             that.notifyPlayers();
+
             that.emit('gameAwaiting');
         } else if (state === GameState.Turn) {
             that.emit('gameTurnProcessing');
@@ -58,16 +64,22 @@ function Game() {
             that.history.pushTurn(that.players[0], that.players[1]);
 
             gameResult = that.board.processTurn(that.players[0], that.players[1]);
-            gameResult === 0 ? that.setState(GameState.Waiting) : that.setState(GameState.Ended, gameResult);
+            gameResult === 0 ? that.setState(GameState.Waiting) : that.setState(GameState.Ended);
+
             that.emit('gameTurnProcessed')
         } else if (state === GameState.Ended) {
             that.history.end(gameResult,
                 gameResult === 1 ? that.players[0].getPlayerId() : that.players[1].getPlayerId()
             );
+
             that.emit('gameEnded');
         }
     };
 
+    /**
+     * Method to be called when player's turn has ended and a player wants to commit its move.
+     * @returns {void}
+     */
     this.commitTurn = function () {
         var isTurnCommitted = that.players[0].isReady() && that.players[1].isReady();
 
@@ -76,10 +88,16 @@ function Game() {
         }
     };
 
+    /**
+     * @returns {uuid} gets unique game id
+     */
     this.getGameId = function () {
         return gameId;
     };
 
+    /**
+     * @returns {uuid} gets current game state
+     */
     this.getState = function () {
         return state;
     }
@@ -87,9 +105,8 @@ function Game() {
 
 util.inherits(Game, EventEmitter);
 
-
 /**
- * A method which allows to add new use to the game.
+ * Game will subscribe player.
  * @param {object} player - should represent Player object
  * @return {void}
  */
@@ -112,6 +129,10 @@ Game.prototype.start = function () {
     }
 }
 
+/**
+ * Subscribed players are notified and startTurn is called. 
+ * @return {void}
+ */
 Game.prototype.notifyPlayers = function () {
     'use strict';
     var commitTurnCallback = this.commitTurn;

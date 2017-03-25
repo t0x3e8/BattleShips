@@ -21,6 +21,9 @@ function Player(playerData) {
     this.state = PlayerState.Stopped;
     this.turnCommitCallback = null;
 
+    /**
+     * @returns {uuid} gets unique player id
+     */
     this.getPlayerId = function () {
         return playerId;
     }
@@ -37,6 +40,12 @@ Player.prototype.setPawns = function (pawnsSet) {
     this.pawns = pawnsSet;
 }
 
+/**
+ * Call startTurn method when new turn begins and subscribe a commit callback
+ * @param {function} turnCommitCallback A callback to notify game that turn is commmitted
+ * @returns {void} 
+ * n
+ */
 Player.prototype.startTurn = function (turnCommitCallback) {
     'use strict'
 
@@ -44,6 +53,10 @@ Player.prototype.startTurn = function (turnCommitCallback) {
     this.turnCommitCallback = turnCommitCallback;
 }
 
+/**
+ * Call endTurn when the turn is over and Game can be notified.
+ * @return {void}
+ */
 Player.prototype.endTurn = function () {
     'use strict'
 
@@ -53,6 +66,10 @@ Player.prototype.endTurn = function () {
     }
 }
 
+/**
+ * Determines whether player is done with the current turn
+ * @returns {boolean} true - when player's turn is done, false - when it's not
+ */
 Player.prototype.isReady = function () {
     'use strict'
 

@@ -79,9 +79,10 @@ describe('Game requirements', sinon.test(function () {
         game.on('gameAwaiting', turn);
         game.on('gameStarted', turn);
         game.on('gameEnded', function () {
-            expect(game.history.getTurnNumber()).to.be.equal(7);
-            expect(game.history.getTurn(game.history.getTurnNumber())).to.not.be.null;
-            expect(game.history.getTurn(game.history.getTurnNumber()).result).to.be.equal(1); //player 1 wins
+            var lastTurnNumber = game.history.records.length;
+            expect(lastTurnNumber).to.be.equal(7);
+            expect(game.history.getTurn(lastTurnNumber)).to.not.be.null;
+            expect(game.history.getTurn(lastTurnNumber).result).to.be.equal(1); //player 1 wins
             done();
         })
         game.start();

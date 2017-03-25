@@ -14,7 +14,10 @@ function Pawn(pawnData) {
     
     this.type = pawnData.type;
     this.positionIndex = pawnData.positionIndex;
-
+    
+    /**
+     * @returns {uuid} gets unique pawn id
+     */
     this.getPawnId = function () {
         return pawnId;
     }
