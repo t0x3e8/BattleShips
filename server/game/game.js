@@ -45,6 +45,7 @@ function Game() {
         state = newState;
 
         if (state === GameState.Started) {
+            that.emit('gameStarting');
             // initialize History and Board. Let players know that turn started and wait.
             that.history = new History();
             that.history.pushTurn(that.players[0], that.players[1]);
@@ -52,12 +53,12 @@ function Game() {
             that.board.init(that.players[0], that.players[1]);
 
             that.setState(GameState.Waiting);
-            that.emit('gameStarted');
+            // that.emit('gameStarted');
         } else if (state === GameState.Waiting) {
             // TODO: Set timer to send an email notification after a while
             that.notifyPlayers();
 
-            that.emit('gameAwaiting');
+            that.emit('gameWaiting');
         } else if (state === GameState.Turn) {
             that.emit('gameTurnProcessing');
             // Let Board to process the turn and save output in the history

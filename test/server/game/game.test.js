@@ -76,8 +76,7 @@ describe('Game requirements', sinon.test(function () {
         game.join(player1);
         game.join(player2);
 
-        game.on('gameAwaiting', turn);
-        game.on('gameStarted', turn);
+        game.on('gameWaiting', turn);
         game.on('gameEnded', function () {
             var lastTurnNumber = game.history.records.length;
             expect(lastTurnNumber).to.be.equal(7);
