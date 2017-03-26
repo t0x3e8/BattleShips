@@ -1,4 +1,5 @@
-#Battleships
+# Battleships
+
 As my response to the movement of “Get Noticed!”, I decided to develop a game. Game with which I have some feelings and for sure some good memories. This small entertainment was for sure part of my childhood which has been kept in my mind for the next years.
 
 The game in Poland was called “Manewry Morskie” (Naval Maneuvers?). 
