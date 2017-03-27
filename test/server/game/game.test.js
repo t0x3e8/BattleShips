@@ -34,14 +34,14 @@ describe('Game requirements', sinon.test(function () {
 
     });
 
-    it('Create a board of 12 columns and 18 rows.', sinon.test(function () {
+    it('Create a board of 12 columns and 18 rows', sinon.test(function () {
         var board = new Board();
 
         expect(board.getBoardId()).to.not.be.empty;
         expect(board.fields[17][11]).to.not.be.empty;
     }));
 
-    it('Make available to two players to join the game with a random set of pawns.', sinon.test(function () {
+    it('Allow two players to join the game with random pawns', sinon.test(function () {
         var game = new Game();
         game.join(player1);
         game.join(player2);
@@ -54,7 +54,7 @@ describe('Game requirements', sinon.test(function () {
         expect(game.getState()).to.be.equal(GameState.Waiting);
     }));
 
-    it('Let both users execute their moves with recording history.', sinon.test(function (done) {
+    it('Let both players execute their moves while history is being recorded', sinon.test(function (done) {
         var game = new Game();
         var numberOfTurns = 5;
         var turn = function () {
@@ -88,7 +88,25 @@ describe('Game requirements', sinon.test(function () {
 
     }));
 
-    it.skip('When a pawn is selected return fields on which the move could be executed (select range)', sinon.test(function () {
+    it('Specify the range of the pawn considering the position of the pawn in the board', sinon.test(function (done) {
+        var player1 = new Player({ name: 'Player 1' });
+        player1.setPawns([new Pawn({ type: 1, positionIndex: 0 })]);
+        var player2 = new Player({ name: 'Player 2' });
+        player2.setPawns([new Pawn({ type: 1, positionIndex: (8 * 12) - 1 })]);
+
+        var game = new Game();
+        game.join(player1);
+        game.join(player2);
+        game.on('gameWaiting', function () {
+            var range = game.board.getPawnRange(player1.pawns[0]);
+            expect(range.length).to.be.equal(3);
+            done();
+        });
+
+        game.start();
+    }));
+
+    it.skip('Simulate the combat between the ships', sinon.test(function () {
 
     }));
 }));
