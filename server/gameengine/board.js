@@ -4,11 +4,41 @@
 var uuid = require('uuid/v1');
 var settings = require('./settings');
 var Field = require('./field.js');
-// var findPawnInArray = null;
-var initializeFields = null;
-var createArray = null;
 
-/* global Reflect */
+
+/**
+ * Create an array of board fields, based on the settings.board.map
+ * @returns {array} Two dimentional array of fields
+ */
+function initializeFields() {
+    'use strict'
+
+    var fieldsMap = settings.board.map;
+    var numberOfColumns = settings.board.numberOfColumns;
+    var numberOfRows = settings.board.numberOfRows;
+    var colPosition = 0;
+    var rowPosition = 0;
+    var fields = [];
+    var fieldType = 0;
+    var row = [];
+
+    for (colPosition = 0; colPosition < numberOfColumns; colPosition++) {
+        row = [];
+        for (rowPosition = 0; rowPosition < numberOfRows; rowPosition++) {
+            fieldType = fieldsMap[colPosition][rowPosition];
+
+            row[rowPosition] = new Field({
+                type: fieldType,
+                columnIndex: colPosition,
+                rowIndex: colPosition
+            });
+        }
+
+        fields[colPosition] = row;
+    }
+
+    return fields;
+}
 
 /**
  * The Board object represents the structure of the board, including characteristics  of board eg. 
@@ -104,36 +134,5 @@ Board.prototype.getPawnRange = function (pawnId) {
 //         return pawn.getPawnId() === searchingPawnId;
 //     });
 // }
-
-initializeFields = function () {
-    'use strict'
-
-    var fieldsMap = settings.board.map;
-    var numberOfColumns = settings.board.numberOfColumns;
-    var numberOfRows = settings.board.numberOfRows;
-    var colPosition = 0;
-    var rowPosition = 0;
-    var fields = [];
-    var fieldType = 0;
-    var row = [];
-
-    for (colPosition = 0; colPosition < numberOfColumns; colPosition++) {
-        row = [];
-        for (rowPosition = 0; rowPosition < numberOfRows; rowPosition++) {
-            fieldType = fieldsMap[colPosition][rowPosition];
-
-            row[rowPosition] = new Field({
-                type: fieldType,
-                columnIndex: colPosition,
-                rowIndex: colPosition
-            });
-        }
-
-        fields[colPosition] = row;
-    }
-
-    return fields;
-}
-
 
 module.exports = Board;
