@@ -7,10 +7,30 @@ var Field = require('./field.js');
 
 
 /**
+ * The Board object represents the structure of the board, including characteristics  of board eg. 
+ * fields of ports and the neutral fields. In addition, it shows the setup of pawns on the board of players.
+ * @returns {void}
+ */
+function Board() {
+    'use strict'
+
+    var boardId = uuid();
+
+    this.fields = this.createBoardFields();
+
+    /**
+     * @returns {uuid} gets unique board id
+     */
+    this.getBoardId = function () {
+        return boardId;
+    };
+}
+
+/**
  * Create an array of board fields, based on the settings.board.map
  * @returns {array} Two dimentional array of fields
  */
-function initializeFields() {
+Board.prototype.createBoardFields = function () {
     'use strict'
 
     var fieldsMap = settings.board.map;
@@ -41,28 +61,6 @@ function initializeFields() {
 }
 
 /**
- * The Board object represents the structure of the board, including characteristics  of board eg. 
- * fields of ports and the neutral fields. In addition, it shows the setup of pawns on the board of players.
- * @returns {void}
- */
-function Board() {
-    'use strict'
-
-    var boardId = uuid();
-
-    this.fields = initializeFields();
-    this.oldPawnsSet1 = [];
-    this.oldPawnsSet2 = [];
-
-    /**
-     * @returns {uuid} gets unique board id
-     */
-    this.getBoardId = function () {
-        return boardId;
-    };
-}
-
-/**
  * Initialize board with the starting setup of pawns.
  * @param {Player} player1 Player number 1
  * @param {Player} player2 Player number 2
@@ -71,8 +69,25 @@ function Board() {
 Board.prototype.init = function (player1, player2) {
     'use strict';
 
-    this.oldPawnsSet1 = player1.pawns;
-    this.oldPawnsSet2 = player2.pawns;
+    this.setPawnsOnFields(player1.pawns);
+    this.setPawnsOnFields(player2.pawns);
+}
+
+/**
+ * Set pawns on board
+ * @param {array} pawns Set of pawns to be placed on fields
+ * @returns {void}
+ */
+Board.prototype.setPawnsOnFields = function (pawns) {
+    'use strict'
+    var that = this;
+
+    pawns.forEach(function (pawn) {
+        var col = pawn.col;
+        var row = pawn.row;
+
+        that.fields[col][row].pawn = pawn;
+    });
 }
 
 /**

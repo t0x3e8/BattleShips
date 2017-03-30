@@ -15,6 +15,7 @@ function Field(fieldData) {
     this.type = fieldData.type;
     this.colIndex = fieldData.columnIndex;
     this.rowIndex = fieldData.rowIndex;
+    this.pawn = null;
     
     /**
      * @returns {uuid} gets unique field id

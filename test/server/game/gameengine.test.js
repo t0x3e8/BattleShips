@@ -22,11 +22,11 @@ describe('Game Engine requirements', sinon.test(function () {
 
     beforeEach(function () {
         player1 = new Player({ name: 'Player 1' });
-        pawnSet1 = [new Pawn({ type: 1, positionIndex: 0 }), new Pawn({ type: 1, positionIndex: 2 }), new Pawn({ type: 2, positionIndex: 3 })];
+        pawnSet1 = [new Pawn({ type: 1, col: 3, row: 0 }), new Pawn({ type: 1, col: 0, row: 0 }), new Pawn({ type: 2, col: 1, row: 0 })];
         player1.setPawns(pawnSet1);
 
         player2 = new Player({ name: 'Player 2' });
-        pawnSet2 = [new Pawn({ type: 1, positionIndex: 0 }), new Pawn({ type: 1, positionIndex: 2 }), new Pawn({ type: 2, positionIndex: 3 })];
+        pawnSet2 = [new Pawn({ type: 1, col: 3, row: 10 }), new Pawn({ type: 1, col: 0, row: 10 }), new Pawn({ type: 2, col: 1, row: 10 })];
         player2.setPawns(pawnSet2);
     });
 
@@ -64,12 +64,12 @@ describe('Game Engine requirements', sinon.test(function () {
             }
 
             expect(player1.isReady()).to.be.false;
-            pawnSet1[0].positionIndex = pawnSet1[0].positionIndex + 1;
+            pawnSet1[0].row += 1;
             player1.setPawns(pawnSet1);
             player1.endTurn();
 
             expect(player2.isReady()).to.be.false;
-            pawnSet2[1].positionIndex = pawnSet2[1].positionIndex + 1;
+            pawnSet2[1].row -= 1;
             player2.setPawns(pawnSet2);
             player2.endTurn();
         };
@@ -90,15 +90,18 @@ describe('Game Engine requirements', sinon.test(function () {
 
     it('Specify the range of the pawn considering the position of the pawn in the board', sinon.test(function (done) {
         var player1 = new Player({ name: 'Player 1' });
-        player1.setPawns([new Pawn({ type: 1, positionIndex: 0 })]);
+        player1.setPawns([new Pawn({ type: 2, col: 0, row: 0 })]);
         var player2 = new Player({ name: 'Player 2' });
-        player2.setPawns([new Pawn({ type: 1, positionIndex: (8 * 12) - 1 })]);
+        player2.setPawns([new Pawn({ type: 1, col: 0, row: 10 })]);
 
         var game = new Game();
         game.join(player1);
         game.join(player2);
         game.on('gameWaiting', function () {
             var range = game.board.getPawnRange(player1.pawns[0].getPawnId());
+            expect(game.board.fields[0][0].pawn.type).to.be.equal(2);
+            expect(game.board.fields[0][10].pawn.type).to.be.equal(1);
+            expect(game.board.fields[0][1].pawn).to.be.null;
             expect(range.length).to.be.equal(3);
             done();
         });
