@@ -2,10 +2,10 @@
 
 var sinon = require('sinon');
 var expect = require('chai').expect;
-var Game = require('../../../server/game/game');
-var Board = require('../../../server/game/board');
-var Player = require('../../../server/game/player');
-var Pawn = require('../../../server/game/pawn');
+var Game = require('../../../server/gameengine/game');
+var Board = require('../../../server/gameengine/board');
+var Player = require('../../../server/gameengine/player');
+var Pawn = require('../../../server/gameengine/pawn');
 var GameState = {
     NotStarted: 0,
     Started: 1,
