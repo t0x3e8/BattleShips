@@ -14,7 +14,8 @@
     "express": "~4.14.0",
     "less-middleware": "~2.2.0",
     "morgan": "~1.7.0",
-    "serve-favicon": "~2.3.0"
+    "serve-favicon": "~2.3.0",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "bower": "^1.8.0",
