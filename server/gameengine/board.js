@@ -50,7 +50,7 @@ Board.prototype.createBoardFields = function () {
             row[rowPosition] = new Field({
                 type: fieldType,
                 columnIndex: colPosition,
-                rowIndex: colPosition
+                rowIndex: rowPosition
             });
         }
 
@@ -130,24 +130,34 @@ Board.prototype.determineGameResult = function () {
 
 /**
  * The range of the ship is determined on the board
- * @param {uuid} pawnId Pawn id
+ * @param {uuid} pawn Pawn for which the range should be calculate
  * @returns {array} Available moves for the pawn are returned in the form of an array  
  */
-Board.prototype.getPawnRange = function (pawnId) {
+Board.prototype.getPawnRange = function (pawn) {
     'use strict'
 
-    // var pawn = findPawnInArray(this.oldPawnsSet1, this.oldPawnsSet2, pawnId);
+    var pawnRange = settings.pawns.find(p => p.typeId === pawn.type).range;
+    var fieldsInRange = [];
+    var col = pawn.col - pawnRange;
+    var colMax = pawn.col + pawnRange;
+    var rowMin = pawn.row - pawnRange;
+    var row = rowMin;
+    var rowMax = pawn.row + pawnRange;
 
-    return [1, 2, 3];
+    for (col; col <= colMax; col++) {
+        if (this.fields[col] !== undefined) {
+            for (row; row <= rowMax; row++) {
+                if (this.fields[col][row] !== undefined) {
+                    if (row !== pawn.row || col !== pawn.col) {
+                        fieldsInRange.push(this.fields[col][row]);
+                    }
+                }
+            }
+            row = rowMin;
+        }
+    }
+
+    return fieldsInRange;
 }
-
-// findPawnInArray = function (pawnSet1, pawnSet2, searchingPawnId) {
-//     'use strict'
-//     var pawnSets = pawnSet1.concat(pawnSet2);
-
-//     return pawnSets.find(function (pawn) {
-//         return pawn.getPawnId() === searchingPawnId;
-//     });
-// }
 
 module.exports = Board;

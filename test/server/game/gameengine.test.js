@@ -92,17 +92,23 @@ describe('Game Engine requirements', sinon.test(function () {
         var player1 = new Player({ name: 'Player 1' });
         player1.setPawns([new Pawn({ type: 2, col: 0, row: 0 })]);
         var player2 = new Player({ name: 'Player 2' });
-        player2.setPawns([new Pawn({ type: 1, col: 0, row: 10 })]);
+        player2.setPawns([new Pawn({ type: 1, col: 0, row: 17 })]);
 
         var game = new Game();
         game.join(player1);
         game.join(player2);
         game.on('gameWaiting', function () {
-            var range = game.board.getPawnRange(player1.pawns[0].getPawnId());
+            var range = game.board.getPawnRange(player2.pawns[0]);
             expect(game.board.fields[0][0].pawn.type).to.be.equal(2);
-            expect(game.board.fields[0][10].pawn.type).to.be.equal(1);
-            expect(game.board.fields[0][1].pawn).to.be.null;
+            expect(game.board.fields[0][17].pawn.type).to.be.equal(1);
+            expect(game.board.fields[0][16].pawn).to.be.null;
             expect(range.length).to.be.equal(3);
+            expect(range[0].rowIndex).to.be.equal(16);
+            expect(range[0].colIndex).to.be.equal(0);
+            expect(range[1].rowIndex).to.be.equal(16);
+            expect(range[1].colIndex).to.be.equal(1);
+            expect(range[2].rowIndex).to.be.equal(17);
+            expect(range[2].colIndex).to.be.equal(1);
             done();
         });
 

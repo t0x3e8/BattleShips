@@ -26,8 +26,8 @@ var settings = {
     pawns: [
         {
             typeId: 1,
-            name: 'Submarine',
-            range: 2,
+            name: 'TestShip',
+            range: 1,
             destroy: [2],
             destroyedBy: [2]
         },
