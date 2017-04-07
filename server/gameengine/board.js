@@ -148,7 +148,7 @@ Board.prototype.getPawnRange = function (pawn) {
         if (this.fields[col] !== undefined) {
             for (row; row <= rowMax; row++) {
                 if (this.fields[col][row] !== undefined) {
-                    if (row !== pawn.row || col !== pawn.col) {
+                    if (!this.fields[col][row].pawn) {
                         fieldsInRange.push(this.fields[col][row]);
                     }
                 }

@@ -4,7 +4,7 @@ var uuid = require('uuid/v1');
 
 /**
  * A class representing a Pawn object.
- * @param {object} pawnData - Object containing pawn information as: type, col, row,
+ * @param {object} pawnData - Object containing pawn information as: type, col, row, playerId
  * @returns {void} 
  */
 function Pawn(pawnData) {
@@ -15,6 +15,7 @@ function Pawn(pawnData) {
     this.type = pawnData.type;
     this.col = pawnData.col;
     this.row = pawnData.row;
+    this.player = null;
     
     /**
      * @returns {uuid} gets unique pawn id
@@ -22,6 +23,11 @@ function Pawn(pawnData) {
     this.getPawnId = function () {
         return pawnId;
     }
+}
+
+Pawn.prototype.setPlayer = function (player) {
+    'use strict'
+    this.player = player;
 }
 
 Pawn.NOSHIP = 0;
