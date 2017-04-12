@@ -11,12 +11,12 @@ function Pawn(pawnData) {
     'use strict'
 
     var pawnId = uuid();
-    
+
     this.type = pawnData.type;
     this.col = pawnData.col;
     this.row = pawnData.row;
     this.player = null;
-    
+
     /**
      * @returns {uuid} gets unique pawn id
      */

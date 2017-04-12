@@ -113,9 +113,10 @@ describe('Game Engine requirements', sinon.test(function () {
         game.start();
     }));
 
-    it('Simulate combat between ships', sinon.test(function (done) {
+    it.skip('Simulate combat between ships', sinon.test(function (done) {
+        var turn = 0;
         var player1 = new Player({ name: 'Player 1' });
-        player1.setPawns([new Pawn({ type: 2, col: 0, row: 16 })]);
+        player1.setPawns([new Pawn({ type: 2, col: 0, row: 16 }), new Pawn({ type: 1, col: 1, row: 0 })]);
         var player2 = new Player({ name: 'Player 2' });
         player2.setPawns([new Pawn({ type: 1, col: 0, row: 17 }), new Pawn({ type: 1, col: 1, row: 17 })]);
 
@@ -123,10 +124,23 @@ describe('Game Engine requirements', sinon.test(function () {
         game.join(player1);
         game.join(player2);
         game.on('gameWaiting', function () {
-            var range = game.board.getPawnRange(player2.pawns[0]);
-            expect(range.length).to.be.equal(2);
+            switch (turn) {
+                case 0:
+                    turn++;
+                    var range = game.board.getPawnRange(player2.pawns[0]);
+                    expect(range.length).to.be.equal(2);
 
-            done();
+                    player2.setPawns([new Pawn({ type: 1, col: 0, row: 16 }), new Pawn({ type: 1, col: 1, row: 17 })]);
+                    player2.endTurn();
+
+                    player1.setPawns([new Pawn({ type: 2, col: 0, row: 16 }), new Pawn({ type: 1, col: 1, row: 1 })]);
+                    player1.endTurn();
+                    break;
+                case 1:                    
+                    turn++;
+                    var range = game.board.getPawnRange(player2.pawns[0]);
+                    break;
+            }
         });
 
         game.start();
