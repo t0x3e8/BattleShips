@@ -25,17 +25,24 @@ function Pawn(pawnData) {
     }
 }
 
+/**
+ * Assign pawn to provided player
+ * @param {player} player Player instance
+ * @returns {void} 
+ */
 Pawn.prototype.setPlayer = function (player) {
     'use strict'
     this.player = player;
 }
 
-Pawn.NOSHIP = 0;
-Pawn.SHIP1 = 1;
-Pawn.SHIP2 = 2;
-// Pawn.SHIP3 = 3;
-// Pawn.SHIP4 = 4;
-// Pawn.SHIP5 = 5;
-// Pawn.SHIP6 = 6;
+/**
+ * Get assigned player for pawn
+ * @returns {player} returns assigned player
+ */
+Pawn.prototype.getPlayer = function () {
+    'use strict'
+
+    return this.player;
+}
 
 module.exports = Pawn;

@@ -113,7 +113,7 @@ describe('Game Engine requirements', sinon.test(function () {
         game.start();
     }));
 
-    it('Simulate the combat between the ships', sinon.test(function (done) {
+    it('Simulate combat between ships', sinon.test(function (done) {
         var player1 = new Player({ name: 'Player 1' });
         player1.setPawns([new Pawn({ type: 2, col: 0, row: 16 })]);
         var player2 = new Player({ name: 'Player 2' });

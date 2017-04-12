@@ -69,22 +69,24 @@ Board.prototype.createBoardFields = function () {
 Board.prototype.init = function (player1, player2) {
     'use strict';
 
-    this.setPawnsOnFields(player1.pawns);
-    this.setPawnsOnFields(player2.pawns);
+    this.setPawnsOnFields(player1.pawns, player1);
+    this.setPawnsOnFields(player2.pawns, player2);
 }
 
 /**
  * Set pawns on board
  * @param {array} pawns Set of pawns to be placed on fields
+ * @param {player} player Link pawns with player
  * @returns {void}
  */
-Board.prototype.setPawnsOnFields = function (pawns) {
+Board.prototype.setPawnsOnFields = function (pawns, player) {
     'use strict'
     var that = this;
 
     pawns.forEach(function (pawn) {
         var col = pawn.col;
         var row = pawn.row;
+        pawn.setPlayer(player);
 
         that.fields[col][row].pawn = pawn;
     });
@@ -143,14 +145,21 @@ Board.prototype.getPawnRange = function (pawn) {
     var rowMin = pawn.row - pawnRange;
     var row = rowMin;
     var rowMax = pawn.row + pawnRange;
+    var pawnInField = null;
+    var that = this;
 
+    // each field within the range is tested, if: 
+    // - the field does not contain a pawn of the same player,
     for (col; col <= colMax; col++) {
-        if (this.fields[col] !== undefined) {
+        if (that.fields[col] !== undefined) {
             for (row; row <= rowMax; row++) {
-                if (this.fields[col][row] !== undefined) {
-                    if (!this.fields[col][row].pawn) {
-                        fieldsInRange.push(this.fields[col][row]);
+                if (that.fields[col][row] !== undefined) {
+                    pawnInField = that.fields[col][row].pawn;
+                    
+                    if (!pawnInField || (pawnInField.getPlayer() && pawnInField.getPlayer().getPlayerId() !== pawn.getPlayer().getPlayerId())) {
+                        fieldsInRange.push(that.fields[col][row]);
                     }
+
                 }
             }
             row = rowMin;
