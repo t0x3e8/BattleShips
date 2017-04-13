@@ -88,7 +88,40 @@ describe('Game Engine requirements', sinon.test(function () {
 
     }));
 
-    it.skip('Specify the range of the pawn considering the position of the pawn in the board', sinon.test(function (done) {
+    it('Detmines which pawns were moved during turns', sinon.test(function (done) {
+        var player1 = new Player({ name: 'Player 1' });
+        expect(player1.pawns).to.be.empty;
+        player1.setPawns([new Pawn({ type: 2, col: 0, row: 0 }), new Pawn({ type: 2, col: 1, row: 0 })]);
+        expect(player1.pawns.length).to.equal(2);
+        expect(player1.movedPawns).to.be.empty;
+
+        var player2 = new Player({ name: 'Player 2' });
+        expect(player2.pawns).to.be.empty;
+        player2.setPawns([new Pawn({ type: 1, col: 0, row: 17 })]);
+        expect(player2.pawns.length).to.equal(1);
+        expect(player2.movedPawns).to.be.empty;
+
+        var game = new Game();
+        game.join(player1);
+        game.join(player2);
+        game.on('gameWaiting', function () {
+            var pawnsSet = player1.pawns;
+            player1.setPawns([
+                new Pawn({ type: 2, col: 2, row: 1, pawnId : player1.pawns[0].getPawnId() }), 
+                new Pawn({ type: 2, col: 1, row: 0, pawnId : player1.pawns[1].getPawnId() })
+            ]);
+
+            expect(player1.pawns.length).to.equal(2);
+            expect(player1.movedPawns).to.not.be.empty;
+            expect(player1.movedPawns[0].col).to.equal(2);
+            expect(player1.movedPawns[0].row).to.equal(1);
+
+            done();            
+        });
+        game.start();
+    }));
+
+    it('Specify the range of the pawn considering the position of the pawn in the board', sinon.test(function (done) {
         var player1 = new Player({ name: 'Player 1' });
         player1.setPawns([new Pawn({ type: 2, col: 0, row: 0 })]);
         var player2 = new Player({ name: 'Player 2' });

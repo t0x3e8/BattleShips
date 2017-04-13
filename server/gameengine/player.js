@@ -38,7 +38,20 @@ function Player(playerData) {
 Player.prototype.setPawns = function (pawnsSet) {
     'use strict'
 
-    // this.pawns = pawnsSet;
+    var that = this;
+    that.movedPawns = [];
+
+    if (that.pawns.length === 0) {
+        that.pawns = pawnsSet.slice();
+    } else {
+        // find moved pawns by comparing two pawns set (old and new one)
+        that.pawns.forEach(function (pawn) {
+            var newPawn = pawnsSet.find(p => p.getPawnId() === pawn.getPawnId());
+            if (newPawn.col !== pawn.col || newPawn.row !== pawn.row) {
+                that.movedPawns.push(newPawn);
+            }
+        })
+    }
 }
 
 /**
@@ -50,7 +63,6 @@ Player.prototype.setPawns = function (pawnsSet) {
 Player.prototype.startTurn = function (turnCommitCallback) {
     'use strict'
 
-    this.movedPawns = [];
     this.state = PlayerState.Ready;
     this.turnCommitCallback = turnCommitCallback;
 }
