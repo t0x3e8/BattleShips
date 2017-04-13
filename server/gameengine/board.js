@@ -5,7 +5,6 @@ var uuid = require('uuid/v1');
 var settings = require('./settings');
 var Field = require('./field.js');
 
-
 /**
  * The Board object represents the structure of the board, including characteristics  of board eg. 
  * fields of ports and the neutral fields. In addition, it shows the setup of pawns on the board of players.
@@ -101,6 +100,7 @@ Board.prototype.setPawnsOnFields = function (pawns, player) {
 Board.prototype.processTurn = function (player1, player2) {
     'use strict';
 
+
     // find moved pawn of pawns set1
     // this.processMoveAndCombat();
     // find moved pawn of pawns set2
@@ -148,8 +148,9 @@ Board.prototype.getPawnRange = function (pawn) {
     var pawnInField = null;
     var that = this;
 
-    // each field within the range is tested, if: 
-    // - the field does not contain a pawn of the same player,
+    // each field within the square range is tested, if: 
+    // - the field has no pawns in it, mark the field as in range,
+    // - the field has a pawn, but the pawn is opponent's pawn, mark the field as in range, 
     for (col; col <= colMax; col++) {
         if (that.fields[col] !== undefined) {
             for (row; row <= rowMax; row++) {

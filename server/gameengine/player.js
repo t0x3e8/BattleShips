@@ -18,6 +18,7 @@ function Player(playerData) {
     
     this.name = playerData.name;
     this.pawns = [];
+    this.movedPawns = [];
     this.state = PlayerState.Stopped;
     this.turnCommitCallback = null;
 
@@ -37,7 +38,7 @@ function Player(playerData) {
 Player.prototype.setPawns = function (pawnsSet) {
     'use strict'
 
-    this.pawns = pawnsSet;
+    // this.pawns = pawnsSet;
 }
 
 /**
@@ -49,6 +50,7 @@ Player.prototype.setPawns = function (pawnsSet) {
 Player.prototype.startTurn = function (turnCommitCallback) {
     'use strict'
 
+    this.movedPawns = [];
     this.state = PlayerState.Ready;
     this.turnCommitCallback = turnCommitCallback;
 }
@@ -59,6 +61,9 @@ Player.prototype.startTurn = function (turnCommitCallback) {
  */
 Player.prototype.endTurn = function () {
     'use strict'
+
+    // TODO Implement: this.pawns = this.pawns +/- this.movedPawns;
+    // or maybe there should be an update callback to set pawnsSet after conducted move
 
     this.state = PlayerState.Stopped;
     if (this.turnCommitCallback) {
