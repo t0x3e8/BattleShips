@@ -55,6 +55,20 @@ Player.prototype.setPawns = function (pawnsSet) {
 }
 
 /**
+ * Amend moved pawns and merge them with current pawns set. Usually it takes place when the moved is fully processed.
+ * @return {void}
+ */
+Player.prototype.updatePawn = function (pawnId, newCol, newRow) {
+    'use strict'
+
+    var that = this;
+
+    var pawnToUpdate = that.pawnsSet.find(p => p.getPawnId() === pawnId);
+    pawnToUpdate.col = col;
+    pawnToUpdate.row = row;
+}
+
+/**
  * Call startTurn method when new turn begins and subscribe a commit callback
  * @param {function} turnCommitCallback A callback to notify game that turn is commmitted
  * @returns {void} 

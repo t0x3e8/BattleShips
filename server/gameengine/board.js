@@ -100,8 +100,8 @@ Board.prototype.setPawnsOnFields = function (pawns, player) {
 Board.prototype.processTurn = function (player1, player2) {
     'use strict';
 
-
-    // find moved pawn of pawns set1
+    var that = this;
+    that.processMoveAndCombat(player1.movedPawns[0]);
     // this.processMoveAndCombat();
     // find moved pawn of pawns set2
     // this.processMoveAndCombat();
@@ -115,9 +115,20 @@ Board.prototype.processTurn = function (player1, player2) {
  * Pawns which changed their positions will be moved and any attacks will be executed.
  * @returns {void}
  */
-Board.prototype.processMoveAndCombat = function () {
+Board.prototype.processMoveAndCombat = function (player) {
     'use strict';
-    // move or combat pawn agains
+
+    var that = this;
+
+    player.movedPawns.forEach(function (movedPawn) {
+        if (that.fields[movedPawn.col][movedPawn.row].pawn) { // this is Combat
+
+            throw "Combar is missing"
+        } else { // this is Move
+            that.fields[movedPawn.col][movedPawn.row].pawn = movedPawn;
+            player.updatePawn(movedPawn.getPawnId(), movedPawn.col, movedPawn.row);
+        }
+    });
 }
 
 /**
@@ -156,7 +167,7 @@ Board.prototype.getPawnRange = function (pawn) {
             for (row; row <= rowMax; row++) {
                 if (that.fields[col][row] !== undefined) {
                     pawnInField = that.fields[col][row].pawn;
-                    
+
                     if (!pawnInField || (pawnInField.getPlayer() && pawnInField.getPlayer().getPlayerId() !== pawn.getPlayer().getPlayerId())) {
                         fieldsInRange.push(that.fields[col][row]);
                     }
