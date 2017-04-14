@@ -88,7 +88,7 @@ describe('Game Engine requirements', sinon.test(function () {
 
     }));
 
-    it('Detmines which pawns were moved during turns', sinon.test(function (done) {
+    it('Determines which pawns were moved during turns', sinon.test(function (done) {
         var player1 = new Player({ name: 'Player 1' });
         expect(player1.pawns).to.be.empty;
         player1.setPawns([new Pawn({ type: 2, col: 0, row: 0 }), new Pawn({ type: 2, col: 1, row: 0 })]);
