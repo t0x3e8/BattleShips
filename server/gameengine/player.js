@@ -1,9 +1,10 @@
 /* eslint func-style : ["error", "declaration"]
 */
 var uuid = require('uuid/v1');
+var _ = require('underscore');
 var PlayerState = {
-    Stopped : 0,
-    Ready : 1
+    Stopped: 0,
+    Ready: 1
 }
 
 /**
@@ -15,7 +16,7 @@ function Player(playerData) {
     'use strict'
 
     var playerId = uuid();
-    
+
     this.name = playerData.name;
     this.pawns = [];
     this.movedPawns = [];
@@ -39,33 +40,44 @@ Player.prototype.setPawns = function (pawnsSet) {
     'use strict'
 
     var that = this;
+
     that.movedPawns = [];
 
     if (that.pawns.length === 0) {
         that.pawns = pawnsSet.slice();
     } else {
         // find moved pawns by comparing two pawns set (old and new one)
-        that.pawns.forEach(function (pawn) {
-            var newPawn = pawnsSet.find(p => p.getPawnId() === pawn.getPawnId());
+        _.each(that.pawns, function (pawn) {
+            var newPawn = _.find(pawnsSet, function (tempPawn) {
+                return tempPawn.getPawnId() === pawn.getPawnId();
+            });
+
             if (newPawn.col !== pawn.col || newPawn.row !== pawn.row) {
                 that.movedPawns.push(newPawn);
             }
-        })
+        });
     }
 }
 
 /**
  * Amend moved pawns and merge them with current pawns set. Usually it takes place when the moved is fully processed.
+ * @param {uuid} pawnId Id of pawn which is going to be updated
+ * @param {numeric} newCol Numeric position of column on the grid, or undefined if need to be removed
+ * @param {numeric} newRow Numeric position of row on the grid, or undefined if need to be removed 
  * @return {void}
  */
 Player.prototype.updatePawn = function (pawnId, newCol, newRow) {
     'use strict'
 
     var that = this;
+    var pawnToUpdate = _.find(that.pawnsSet, function (tempPawn) {
+        return tempPawn.getPawnId() === pawnId;
+    });
 
-    var pawnToUpdate = that.pawnsSet.find(p => p.getPawnId() === pawnId);
-    pawnToUpdate.col = col;
-    pawnToUpdate.row = row;
+    if (pawnToUpdate) {
+        pawnToUpdate.col = newCol || undefined; 
+        pawnToUpdate.row = newRow || undefined;
+    }
 }
 
 /**

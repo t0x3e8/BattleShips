@@ -1,9 +1,11 @@
 /* eslint func-style : ["error", "declaration"],
-    no-unused-vars : ["error", { "varsIgnorePattern" : "^boardId"}]
+    no-unused-vars : ["error", { "varsIgnorePattern" : "^boardId"}],
+    max-depth : ["error", { "max" : 6}]
 */
 var uuid = require('uuid/v1');
 var settings = require('./settings');
 var Field = require('./field.js');
+var _ = require('underscore');
 
 /**
  * The Board object represents the structure of the board, including characteristics  of board eg. 
@@ -82,9 +84,10 @@ Board.prototype.setPawnsOnFields = function (pawns, player) {
     'use strict'
     var that = this;
 
-    pawns.forEach(function (pawn) {
+    _.each(pawns, function (pawn) {
         var col = pawn.col;
         var row = pawn.row;
+
         pawn.setPlayer(player);
 
         that.fields[col][row].pawn = pawn;
@@ -101,7 +104,11 @@ Board.prototype.processTurn = function (player1, player2) {
     'use strict';
 
     var that = this;
-    that.processMoveAndCombat(player1.movedPawns[0]);
+
+    that.processMoveAndCombat(player1);
+
+    
+    that.processMoveAndCombat(player2);
     // this.processMoveAndCombat();
     // find moved pawn of pawns set2
     // this.processMoveAndCombat();
@@ -113,18 +120,32 @@ Board.prototype.processTurn = function (player1, player2) {
 
 /**
  * Pawns which changed their positions will be moved and any attacks will be executed.
+ * @param {player} player A player which turn has to be processed.
  * @returns {void}
  */
 Board.prototype.processMoveAndCombat = function (player) {
     'use strict';
 
     var that = this;
+    var destroyedBy = [];
 
-    player.movedPawns.forEach(function (movedPawn) {
-        if (that.fields[movedPawn.col][movedPawn.row].pawn) { // this is Combat
+    _.each(player.movedPawns, function (movedPawn) {
+        if (that.fields[movedPawn.col][movedPawn.row].pawn) {
+            // this is Combat            
+            destroyedBy = _.find(settings.pawns, function (element) {
+                return element.typeId === movedPawn.type
+            }).destroyedBy;
 
-            throw "Combar is missing"
-        } else { // this is Move
+            if (_.contains(destroyedBy, movedPawn.type)) {
+                that.fields[movedPawn.col][movedPawn.row].pawn = movedPawn;
+                player.updatePawn(movedPawn.getPawnId(), movedPawn.col, movedPawn.row);
+
+                // DRY!
+            } else {
+                player.updatePawn(movedPawn.getPawnId());
+            }
+        } else {
+            // this is move
             that.fields[movedPawn.col][movedPawn.row].pawn = movedPawn;
             player.updatePawn(movedPawn.getPawnId(), movedPawn.col, movedPawn.row);
         }
@@ -149,7 +170,10 @@ Board.prototype.determineGameResult = function () {
 Board.prototype.getPawnRange = function (pawn) {
     'use strict'
 
-    var pawnRange = settings.pawns.find(p => p.typeId === pawn.type).range;
+    var pawnRange = _.find(settings.pawns, function (element) {
+        return element.typeId === pawn.type
+    }).range;
+
     var fieldsInRange = [];
     var col = pawn.col - pawnRange;
     var colMax = pawn.col + pawnRange;
@@ -163,12 +187,12 @@ Board.prototype.getPawnRange = function (pawn) {
     // - the field has no pawns in it, mark the field as in range,
     // - the field has a pawn, but the pawn is opponent's pawn, mark the field as in range, 
     for (col; col <= colMax; col++) {
-        if (that.fields[col] !== undefined) {
+        if (typeof that.fields[col] !== 'undefined') {
             for (row; row <= rowMax; row++) {
-                if (that.fields[col][row] !== undefined) {
+                if (typeof that.fields[col][row] !== 'undefined') {
                     pawnInField = that.fields[col][row].pawn;
-
-                    if (!pawnInField || (pawnInField.getPlayer() && pawnInField.getPlayer().getPlayerId() !== pawn.getPlayer().getPlayerId())) {
+                    if (!pawnInField || pawnInField.getPlayer() && 
+                        pawnInField.getPlayer().getPlayerId() !== pawn.getPlayer().getPlayerId()) {
                         fieldsInRange.push(that.fields[col][row]);
                     }
 
