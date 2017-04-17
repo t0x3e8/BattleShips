@@ -70,7 +70,7 @@ Player.prototype.updatePawn = function (pawnId, newCol, newRow) {
     'use strict'
 
     var that = this;
-    var pawnToUpdate = _.find(that.pawnsSet, function (tempPawn) {
+    var pawnToUpdate = _.find(that.pawns, function (tempPawn) {
         return tempPawn.getPawnId() === pawnId;
     });
 

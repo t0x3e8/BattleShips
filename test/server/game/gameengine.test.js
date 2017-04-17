@@ -54,7 +54,7 @@ describe('Game Engine requirements', sinon.test(function () {
         expect(game.getState()).to.be.equal(GameState.Waiting);
     }));
 
-    it.skip('Let both players execute their moves while history is being recorded', sinon.test(function (done) {
+    it('Let both players execute their moves while history is being recorded', sinon.test(function (done) {
         var game = new Game();
         var numberOfTurns = 5;
         var turn = function () {
@@ -64,12 +64,12 @@ describe('Game Engine requirements', sinon.test(function () {
             }
 
             expect(player1.isReady()).to.be.false;
-            pawnSet1[0].row += 1;
+            pawnSet1[0] = new Pawn({ type: 1, col: 2, row: player1.pawns[0].row + 1, pawnId: player1.pawns[0].getPawnId() });
             player1.setPawns(pawnSet1);
             player1.endTurn();
 
             expect(player2.isReady()).to.be.false;
-            pawnSet2[1].row -= 1;
+            pawnSet2[0] = new Pawn({ type: 1, col: 3, row: player2.pawns[0].row - 1, pawnId: player2.pawns[0].getPawnId() });
             player2.setPawns(pawnSet2);
             player2.endTurn();
         };
@@ -80,6 +80,8 @@ describe('Game Engine requirements', sinon.test(function () {
         game.on('gameEnded', function () {
             var lastTurnNumber = game.history.records.length;
             expect(lastTurnNumber).to.be.equal(7);
+            expect(player1.pawns[0].row).to.be.equal(5);
+            expect(player2.pawns[0].row).to.be.equal(5);
             expect(game.history.getTurn(lastTurnNumber)).to.not.be.null;
             expect(game.history.getTurn(lastTurnNumber).result).to.be.equal(1); //player 1 wins
             done();
