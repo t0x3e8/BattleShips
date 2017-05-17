@@ -75,8 +75,8 @@ Player.prototype.updatePawn = function (pawnId, newCol, newRow) {
     });
 
     if (pawnToUpdate) {
-        pawnToUpdate.col = newCol || undefined; 
-        pawnToUpdate.row = newRow || undefined;
+        pawnToUpdate.col = newCol; 
+        pawnToUpdate.row = newRow;
     }
 }
 
