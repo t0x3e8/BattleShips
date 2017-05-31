@@ -46,39 +46,36 @@ Player.prototype.setPawns = function (pawnsSet) {
     if (that.pawns.length === 0) {
         that.pawns = pawnsSet.slice();
     } else {
-        // find moved pawns by comparing two pawns set (old and new one)
+        that.pawns = pawnsSet;
+        
         _.each(that.pawns, function (pawn) {
-            var newPawn = _.find(pawnsSet, function (tempPawn) {
-                return tempPawn.getPawnId() === pawn.getPawnId();
-            });
-
-            if (newPawn.col !== pawn.col || newPawn.row !== pawn.row) {
-                that.movedPawns.push(newPawn);
+            if (pawn.col !== pawn.oldCol || pawn.row !== pawn.oldRow) {
+                that.movedPawns.push(pawn);
             }
         });
     }
 }
 
-/**
- * Amend moved pawns and merge them with current pawns set. Usually it takes place when the moved is fully processed.
- * @param {uuid} pawnId Id of pawn which is going to be updated
- * @param {numeric} newCol Numeric position of column on the grid, or undefined if need to be removed
- * @param {numeric} newRow Numeric position of row on the grid, or undefined if need to be removed 
- * @return {void}
- */
-Player.prototype.updatePawn = function (pawnId, newCol, newRow) {
-    'use strict'
+// /**
+//  * Amend moved pawns and merge them with current pawns set. Usually it takes place when the moved is fully processed.
+//  * @param {uuid} pawnId Id of pawn which is going to be updated
+//  * @param {numeric} newCol Numeric position of column on the grid, or undefined if need to be removed
+//  * @param {numeric} newRow Numeric position of row on the grid, or undefined if need to be removed 
+//  * @return {void}
+//  */
+// Player.prototype.updatePawn = function (pawnId, newCol, newRow) {
+//     'use strict'
 
-    var that = this;
-    var pawnToUpdate = _.find(that.pawns, function (tempPawn) {
-        return tempPawn.getPawnId() === pawnId;
-    });
+//     var that = this;
+//     var pawnToUpdate = _.find(that.pawns, function (tempPawn) {
+//         return tempPawn.getPawnId() === pawnId;
+//     });
 
-    if (pawnToUpdate) {
-        pawnToUpdate.col = newCol; 
-        pawnToUpdate.row = newRow;
-    }
-}
+//     if (pawnToUpdate) {
+//         pawnToUpdate.col = newCol; 
+//         pawnToUpdate.row = newRow;
+//     }
+// }
 
 /**
  * Call startTurn method when new turn begins and subscribe a commit callback

@@ -6,6 +6,7 @@ var uuid = require('uuid/v1');
 var settings = require('./settings');
 var Field = require('./field.js');
 var _ = require('underscore');
+var Combat = require('./combat.js');
 
 /**
  * The Board object represents the structure of the board, including characteristics  of board eg. 
@@ -107,7 +108,7 @@ Board.prototype.processTurn = function (player1, player2) {
 
     that.processMoveAndCombat(player1);
 
-    
+
     that.processMoveAndCombat(player2);
     // this.processMoveAndCombat();
     // find moved pawn of pawns set2
@@ -127,27 +128,43 @@ Board.prototype.processMoveAndCombat = function (player) {
     'use strict';
 
     var that = this;
-    var destroyedBy = [];
+    var combat = null;
+    var combatResult = null;
+    var targetPawn = null;
 
-    _.each(player.movedPawns, function (movedPawn) {
-        if (that.fields[movedPawn.col][movedPawn.row].pawn) {
-            // this is Combat            
-            destroyedBy = _.find(settings.pawns, function (element) {
-                return element.typeId === movedPawn.type
-            }).destroyedBy;
+    _.each(player.movedPawns, function (currentPawn) {
+        targetPawn = that.fields[currentPawn.col][currentPawn.row].pawn;
+        if (targetPawn) {
+            // this is a Combat            
+            combat = new Combat();
+            combatResult = combat.process(currentPawn.type, targetPawn.type);
 
-            if (_.contains(destroyedBy, movedPawn.type)) {
-                that.fields[movedPawn.col][movedPawn.row].pawn = movedPawn;
-                player.updatePawn(movedPawn.getPawnId(), movedPawn.col, movedPawn.row);
+            if (combatResult === -1) {
+                // attacker lost: pawn location is set to undefined and the field on board is empty
+                that.fields[currentPawn.oldCol][currentPawn.oldRow].pawn = null;
+                currentPawn.updatePosition(undefined, undefined);
+                // player.updatePawn(currentPawn.getPawnId(), undefined, undefined);
+            } else if (combatResult === 0) {
+                // attacker & defender lost: pawns location are set to undefined and fields on board are empty
+                that.fields[currentPawn.col][currentPawn.row].pawn = null;
+                that.fields[currentPawn.oldCol][currentPawn.oldRow].pawn = null;
+                currentPawn.updatePosition(undefined, undefined);
+                targetPawn.updatePosition(undefined, undefined);
+                // player.updatePawn(currentPawn.getPawnId(), undefined, undefined);
+                // player.updatePawn(targetPawn.getPawnId(), undefined, undefined);
+            } else if (combatResult === 1) {
+                // defender lost: pawn location is set to undefined and the field on board is empty
+                that.fields[targetPawn.col][targetPawn.row].pawn = currentPawn;
+                
+                currentPawn.updatePosition(targetPawn.col, targetPawn.row);
+                targetPawn.updatePosition(undefined, undefined);
 
-                // DRY!
-            } else {
-                player.updatePawn(movedPawn.getPawnId());
+                // chyba nie można odpalać zmiany pawna na player 1
             }
         } else {
-            // this is move
-            that.fields[movedPawn.col][movedPawn.row].pawn = movedPawn;
-            player.updatePawn(movedPawn.getPawnId(), movedPawn.col, movedPawn.row);
+            // this is a Move
+            that.fields[currentPawn.col][currentPawn.row].pawn = currentPawn;
+            currentPawn.updatePosition(currentPawn.col, currentPawn.row);
         }
     });
 }
@@ -191,7 +208,7 @@ Board.prototype.getPawnRange = function (pawn) {
             for (row; row <= rowMax; row++) {
                 if (typeof that.fields[col][row] !== 'undefined') {
                     pawnInField = that.fields[col][row].pawn;
-                    if (!pawnInField || pawnInField.getPlayer() && 
+                    if (!pawnInField || pawnInField.getPlayer() &&
                         pawnInField.getPlayer().getPlayerId() !== pawn.getPlayer().getPlayerId()) {
                         fieldsInRange.push(that.fields[col][row]);
                     }

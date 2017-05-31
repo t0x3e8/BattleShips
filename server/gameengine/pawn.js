@@ -13,8 +13,8 @@ function Pawn(pawnData) {
     var pawnId = pawnData.pawnId || uuid();
 
     this.type = pawnData.type;
-    this.col = pawnData.col;
-    this.row = pawnData.row;
+    this.col = this.oldCol = pawnData.col;
+    this.row = this.oldRow = pawnData.row;
     this.player = null;
 
     /**
@@ -43,6 +43,13 @@ Pawn.prototype.getPlayer = function () {
     'use strict'
 
     return this.player;
+}
+
+Pawn.prototype.updatePosition = function (newCol, newRow) {
+    'use strict'
+
+    this.col = newCol;
+    this.row = newRow;
 }
 
 module.exports = Pawn;

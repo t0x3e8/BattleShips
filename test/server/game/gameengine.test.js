@@ -22,11 +22,11 @@ describe('Game Engine requirements', sinon.test(function () {
 
     beforeEach(function () {
         player1 = new Player({ name: 'Player 1' });
-        pawnSet1 = [new Pawn({ type: 1, col: 3, row: 0 }), new Pawn({ type: 1, col: 0, row: 0 }), new Pawn({ type: 2, col: 1, row: 0 })];
+        pawnSet1 = [new Pawn({ type: 100001, col: 3, row: 0 }), new Pawn({ type: 100001, col: 0, row: 0 }), new Pawn({ type: 100002, col: 1, row: 0 })];
         player1.setPawns(pawnSet1);
 
         player2 = new Player({ name: 'Player 2' });
-        pawnSet2 = [new Pawn({ type: 1, col: 3, row: 10 }), new Pawn({ type: 1, col: 0, row: 10 }), new Pawn({ type: 2, col: 1, row: 10 })];
+        pawnSet2 = [new Pawn({ type: 100001, col: 3, row: 10 }), new Pawn({ type: 100001, col: 0, row: 10 }), new Pawn({ type: 100002, col: 1, row: 10 })];
         player2.setPawns(pawnSet2);
     });
 
@@ -64,12 +64,12 @@ describe('Game Engine requirements', sinon.test(function () {
             }
 
             expect(player1.isReady()).to.be.false;
-            pawnSet1[0] = new Pawn({ type: 1, col: 2, row: player1.pawns[0].row + 1, pawnId: player1.pawns[0].getPawnId() });
+            pawnSet1[0].updatePosition(2, player1.pawns[0].row + 1);
             player1.setPawns(pawnSet1);
             player1.endTurn();
 
             expect(player2.isReady()).to.be.false;
-            pawnSet2[0] = new Pawn({ type: 1, col: 3, row: player2.pawns[0].row - 1, pawnId: player2.pawns[0].getPawnId() });
+            pawnSet2[0].updatePosition(3, player2.pawns[0].row - 1);
             player2.setPawns(pawnSet2);
             player2.endTurn();
         };
@@ -93,13 +93,13 @@ describe('Game Engine requirements', sinon.test(function () {
     it('Determines which pawns were moved during turns', sinon.test(function (done) {
         player1 = new Player({ name: 'Player 1' });
         expect(player1.pawns).to.be.empty;
-        player1.setPawns([new Pawn({ type: 2, col: 0, row: 0 }), new Pawn({ type: 2, col: 1, row: 0 })]);
+        player1.setPawns([new Pawn({ type: 100002, col: 0, row: 0 }), new Pawn({ type: 100002, col: 1, row: 0 })]);
         expect(player1.pawns.length).to.equal(2);
         expect(player1.movedPawns).to.be.empty;
 
         player2 = new Player({ name: 'Player 2' });
         expect(player2.pawns).to.be.empty;
-        player2.setPawns([new Pawn({ type: 1, col: 0, row: 17 })]);
+        player2.setPawns([new Pawn({ type: 100001, col: 0, row: 17 })]);
         expect(player2.pawns.length).to.equal(1);
         expect(player2.movedPawns).to.be.empty;
 
@@ -108,10 +108,9 @@ describe('Game Engine requirements', sinon.test(function () {
         game.join(player2);
         game.on('gameWaiting', function () {
             var pawnsSet = player1.pawns;
-            player1.setPawns([
-                new Pawn({ type: 2, col: 2, row: 1, pawnId: player1.pawns[0].getPawnId() }),
-                new Pawn({ type: 2, col: 1, row: 0, pawnId: player1.pawns[1].getPawnId() })
-            ]);
+            pawnsSet[0].updatePosition(2, 1);
+            pawnsSet[1].updatePosition(1, 0);
+            player1.setPawns(pawnsSet);
 
             expect(player1.pawns.length).to.equal(2);
             expect(player1.movedPawns).to.not.be.empty;
@@ -125,17 +124,17 @@ describe('Game Engine requirements', sinon.test(function () {
 
     it('Specify the range of the pawn considering the position of the pawn in the board', sinon.test(function (done) {
         var player1 = new Player({ name: 'Player 1' });
-        player1.setPawns([new Pawn({ type: 2, col: 0, row: 0 })]);
+        player1.setPawns([new Pawn({ type: 100002, col: 0, row: 0 })]);
         var player2 = new Player({ name: 'Player 2' });
-        player2.setPawns([new Pawn({ type: 1, col: 0, row: 17 }), new Pawn({ type: 1, col: 1, row: 17 })]);
+        player2.setPawns([new Pawn({ type: 100001, col: 0, row: 17 }), new Pawn({ type: 100001, col: 1, row: 17 })]);
 
         var game = new Game();
         game.join(player1);
         game.join(player2);
         game.on('gameWaiting', function () {
             var range = game.board.getPawnRange(player2.pawns[0]);
-            expect(game.board.fields[0][0].pawn.type).to.be.equal(2);
-            expect(game.board.fields[0][17].pawn.type).to.be.equal(1);
+            expect(game.board.fields[0][0].pawn.type).to.be.equal(100002);
+            expect(game.board.fields[0][17].pawn.type).to.be.equal(100001);
             expect(game.board.fields[0][16].pawn).to.be.null;
             expect(range.length).to.be.equal(2);
             expect(range[0].rowIndex).to.be.equal(16);
@@ -150,11 +149,11 @@ describe('Game Engine requirements', sinon.test(function () {
 
     it('Simulate moves of ships', sinon.test(function (done) {
         var turnNumber = 0;
-        pawnSet1 = [new Pawn({ type: 2, col: 0, row: 10 })];
+        pawnSet1 = [new Pawn({ type: 100002, col: 0, row: 10 })];
         player1 = new Player({ name: 'Player 1' });
         player1.setPawns(pawnSet1);
 
-        pawnSet2 = [new Pawn({ type: 1, col: 0, row: 17 }), new Pawn({ type: 1, col: 1, row: 17 })];
+        pawnSet2 = [new Pawn({ type: 100001, col: 0, row: 17 }), new Pawn({ type: 100001, col: 1, row: 17 })];
         player2 = new Player({ name: 'Player 2' });
         player2.setPawns(pawnSet2);
 
@@ -166,21 +165,24 @@ describe('Game Engine requirements', sinon.test(function () {
                 var range = game.board.getPawnRange(player2.pawns[0]);
                 expect(range.length).to.be.equal(2);
 
-                var pawnPlayer2 = new Pawn({ type: 1, col: 0, row: 16, pawnId: pawnSet2[0].getPawnId() });
-                player2.setPawns([pawnPlayer2, pawnSet2[1]]);
+                // var pawnPlayer2 = new Pawn({ type: 100001, col: 0, row: 16, pawnId: pawnSet2[0].getPawnId() });
+                pawnSet2[0].updatePosition(0, 16);
+                player2.setPawns(pawnSet2);
+
                 expect(player2.movedPawns.length).to.equal(1);
                 expect(player2.movedPawns[0].getPawnId()).to.equal(pawnSet2[0].getPawnId());
                 player2.endTurn();
 
-                var pawnPlayer1 = new Pawn({ type: 2, col: 0, row: 11, pawnId: pawnSet1[0].getPawnId() });
-                player1.setPawns([pawnPlayer1]);
+                // var pawnPlayer1 = new Pawn({ type: 100002, col: 0, row: 11, pawnId: pawnSet1[0].getPawnId() });
+                pawnSet1[0].updatePosition(0, 11);
+                player1.setPawns(pawnSet1);
+                
                 expect(player1.movedPawns.length).to.equal(1);
                 expect(player1.movedPawns[0].getPawnId()).to.equal(pawnSet1[0].getPawnId());
-
                 turnNumber++;
                 player1.endTurn();
             }
-            else if(turnNumber === 1) {
+            else if (turnNumber === 1) {
                 expect(player1.pawns[0].col).to.be.equal(0);
                 expect(player1.pawns[0].row).to.be.equal(11);
                 expect(player2.pawns[0].col).to.be.equal(0);
@@ -195,11 +197,11 @@ describe('Game Engine requirements', sinon.test(function () {
     }));
 
     it.skip('Simulate combat between ships', sinon.test(function (done) {
-        pawnSet1 = [new Pawn({ type: 2, col: 0, row: 16 })];
+        pawnSet1 = [new Pawn({ type: 100002, col: 0, row: 16 })];
         player1 = new Player({ name: 'Player 1' });
         player1.setPawns(pawnSet1);
 
-        pawnSet2 = [new Pawn({ type: 1, col: 0, row: 17 }), new Pawn({ type: 1, col: 1, row: 17 })];
+        pawnSet2 = [new Pawn({ type: 100001, col: 0, row: 17 }), new Pawn({ type: 100001, col: 1, row: 17 })];
         player2 = new Player({ name: 'Player 2' });
         player2.setPawns(pawnSet2);
 
@@ -210,14 +212,14 @@ describe('Game Engine requirements', sinon.test(function () {
             var range = game.board.getPawnRange(player2.pawns[0]);
             expect(range.length).to.be.equal(2);
 
-            var pawnPlayer2 = new Pawn({ type: 1, col: 0, row: 16, pawnId: pawnSet2[0].getPawnId() });
-            player2.setPawns([pawnPlayer2, pawnSet2[1]]);
+            pawnSet2[0].updatePosition(0, 16);
+            player2.setPawns(pawnSet2);
             expect(player2.movedPawns.length).to.equal(1);
             expect(player2.movedPawns[0].getPawnId()).to.equal(pawnSet2[0].getPawnId());
             player2.endTurn();
 
-            var pawnPlayer1 = new Pawn({ type: 2, col: 0, row: 15, pawnId: pawnSet1[0].getPawnId() });
-            player1.setPawns([pawnPlayer1]);
+            pawnSet1[0].updatePosition(0, 15);
+            player1.setPawns(pawnSet1);
             expect(player1.movedPawns.length).to.equal(1);
             expect(player1.movedPawns[0].getPawnId()).to.equal(pawnSet1[0].getPawnId());
             player1.endTurn();

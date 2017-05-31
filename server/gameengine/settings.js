@@ -25,18 +25,18 @@ var settings = {
     },
     pawns: [
         {
-            typeId: 1,
-            name: 'TestShip',
+            typeId: 100001,
+            name: 'TestShip1',
             range: 1,
-            destroy: [2],
-            destroyedBy: [2]
+            destroy: [100002],
+            destroyedBy: [100001]
         },
         {
-            typeId: 2,
-            name: 'Destroyer',
+            typeId: 100002,
+            name: 'TestShip2',
             range: 4,
-            destroy: [1],
-            destroyedBy: [1]
+            destroy: [],
+            destroyedBy: [100002, 100001]
         }
 
     ]
