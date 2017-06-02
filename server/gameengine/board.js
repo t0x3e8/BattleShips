@@ -107,12 +107,8 @@ Board.prototype.processTurn = function (player1, player2) {
     var that = this;
 
     that.processMoveAndCombat(player1);
-
-
     that.processMoveAndCombat(player2);
-    // this.processMoveAndCombat();
-    // find moved pawn of pawns set2
-    // this.processMoveAndCombat();
+
     // set pawnsSet1 to oldPawnsSet1
     // set pawnsSet2 to oldPawnsSet2
 
@@ -133,38 +129,35 @@ Board.prototype.processMoveAndCombat = function (player) {
     var targetPawn = null;
 
     _.each(player.movedPawns, function (currentPawn) {
-        targetPawn = that.fields[currentPawn.col][currentPawn.row].pawn;
-        if (targetPawn) {
-            // this is a Combat            
-            combat = new Combat();
-            combatResult = combat.process(currentPawn.type, targetPawn.type);
+        if (currentPawn.col !== undefined && currentPawn.row !== undefined) {
 
-            if (combatResult === -1) {
-                // attacker lost: pawn location is set to undefined and the field on board is empty
-                that.fields[currentPawn.oldCol][currentPawn.oldRow].pawn = null;
-                currentPawn.updatePosition(undefined, undefined);
-                // player.updatePawn(currentPawn.getPawnId(), undefined, undefined);
-            } else if (combatResult === 0) {
-                // attacker & defender lost: pawns location are set to undefined and fields on board are empty
-                that.fields[currentPawn.col][currentPawn.row].pawn = null;
-                that.fields[currentPawn.oldCol][currentPawn.oldRow].pawn = null;
-                currentPawn.updatePosition(undefined, undefined);
-                targetPawn.updatePosition(undefined, undefined);
-                // player.updatePawn(currentPawn.getPawnId(), undefined, undefined);
-                // player.updatePawn(targetPawn.getPawnId(), undefined, undefined);
-            } else if (combatResult === 1) {
-                // defender lost: pawn location is set to undefined and the field on board is empty
-                that.fields[targetPawn.col][targetPawn.row].pawn = currentPawn;
-                
-                currentPawn.updatePosition(targetPawn.col, targetPawn.row);
-                targetPawn.updatePosition(undefined, undefined);
+            targetPawn = that.fields[currentPawn.col][currentPawn.row].pawn;
+            if (targetPawn) {
+                // this is a Combat            
+                combat = new Combat();
+                combatResult = combat.process(currentPawn.type, targetPawn.type);
 
-                // chyba nie można odpalać zmiany pawna na player 1
+                if (combatResult === -1) {
+                    // attacker lost: pawn location is set to undefined and the field on board is empty
+                    that.fields[currentPawn.oldCol][currentPawn.oldRow].pawn = null;
+                    currentPawn.updatePosition(undefined, undefined);
+                } else if (combatResult === 0) {
+                    // attacker & defender lost: pawns location are set to undefined and fields on board are empty
+                    that.fields[currentPawn.col][currentPawn.row].pawn = null;
+                    that.fields[currentPawn.oldCol][currentPawn.oldRow].pawn = null;
+                    currentPawn.updatePosition(undefined, undefined);
+                    targetPawn.updatePosition(undefined, undefined);
+                } else if (combatResult === 1) {
+                    // defender lost: pawn location is set to undefined and the field on board is empty
+                    that.fields[currentPawn.col][currentPawn.row].pawn = currentPawn;
+                    currentPawn.updatePosition(currentPawn.col, currentPawn.row);
+                    targetPawn.updatePosition(undefined, undefined);
+                }
+            } else {
+                // this is a Move
+                that.fields[currentPawn.col][currentPawn.row].pawn = currentPawn;
+                currentPawn.updatePosition(currentPawn.col, currentPawn.row);
             }
-        } else {
-            // this is a Move
-            that.fields[currentPawn.col][currentPawn.row].pawn = currentPawn;
-            currentPawn.updatePosition(currentPawn.col, currentPawn.row);
         }
     });
 }
@@ -175,7 +168,7 @@ Board.prototype.processMoveAndCombat = function (player) {
  *  */
 Board.prototype.determineGameResult = function () {
     'use strict';
-
+    
     return 0;
 }
 

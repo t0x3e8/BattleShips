@@ -56,27 +56,6 @@ Player.prototype.setPawns = function (pawnsSet) {
     }
 }
 
-// /**
-//  * Amend moved pawns and merge them with current pawns set. Usually it takes place when the moved is fully processed.
-//  * @param {uuid} pawnId Id of pawn which is going to be updated
-//  * @param {numeric} newCol Numeric position of column on the grid, or undefined if need to be removed
-//  * @param {numeric} newRow Numeric position of row on the grid, or undefined if need to be removed 
-//  * @return {void}
-//  */
-// Player.prototype.updatePawn = function (pawnId, newCol, newRow) {
-//     'use strict'
-
-//     var that = this;
-//     var pawnToUpdate = _.find(that.pawns, function (tempPawn) {
-//         return tempPawn.getPawnId() === pawnId;
-//     });
-
-//     if (pawnToUpdate) {
-//         pawnToUpdate.col = newCol; 
-//         pawnToUpdate.row = newRow;
-//     }
-// }
-
 /**
  * Call startTurn method when new turn begins and subscribe a commit callback
  * @param {function} turnCommitCallback A callback to notify game that turn is commmitted
@@ -86,8 +65,22 @@ Player.prototype.setPawns = function (pawnsSet) {
 Player.prototype.startTurn = function (turnCommitCallback) {
     'use strict'
 
-    this.state = PlayerState.Ready;
-    this.turnCommitCallback = turnCommitCallback;
+    var that = this;
+    var isInvalid = false;
+
+    that.state = PlayerState.Ready;
+    that.turnCommitCallback = turnCommitCallback;
+
+    that.movedPawns = [];
+    _.reject(that.pawns, function (pawn) {
+        isInvalid = pawn.col === undefined || pawn.row === undefined;
+        
+        if (!isInvalid) {
+            pawn.resetState();
+        }
+
+        return isInvalid;
+    })
 }
 
 /**

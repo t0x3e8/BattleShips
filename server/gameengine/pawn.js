@@ -52,4 +52,11 @@ Pawn.prototype.updatePosition = function (newCol, newRow) {
     this.row = newRow;
 }
 
+Pawn.prototype.resetState = function () {
+    'use strict'
+
+    this.oldCol = this.col;
+    this.oldRow = this.row;
+}
+
 module.exports = Pawn;

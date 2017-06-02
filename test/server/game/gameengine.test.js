@@ -206,8 +206,8 @@ describe('Game Engine requirements', sinon.test(function () {
         player2.setPawns(pawnSet2);
 
         var game = new Game();
-        game.join(player1);
         game.join(player2);
+        game.join(player1);
         game.on('gameWaiting', function () {
             var range = game.board.getPawnRange(player2.pawns[0]);
             expect(range.length).to.be.equal(2);
