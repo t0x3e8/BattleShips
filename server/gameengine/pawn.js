@@ -54,7 +54,8 @@ Pawn.prototype.updatePosition = function (newCol, newRow) {
 
     if ((this.col === undefined || this.row === undefined) && this.player) {
         // check whether the method "player.setPawns" is not more appropriate
-        this.player.pawns = _.without(this.player.pawns, this);
+        // this.player.pawns = _.without(this.player.pawns, this);
+        this.player.setPawns(_.without(this.player.pawns, this));
     }
 }
 
