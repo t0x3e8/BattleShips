@@ -1,6 +1,7 @@
 /* eslint func-style : ["error", "declaration"]
 */
 var uuid = require('uuid/v1');
+var _ = require('underscore');
 
 /**
  * A class representing a Pawn object.
@@ -50,6 +51,11 @@ Pawn.prototype.updatePosition = function (newCol, newRow) {
 
     this.col = newCol;
     this.row = newRow;
+
+    if ((this.col === undefined || this.row === undefined) && this.player) {
+        // check whether the method "player.setPawns" is not more appropriate
+        this.player.pawns = _.without(this.player.pawns, this);
+    }
 }
 
 Pawn.prototype.resetState = function () {

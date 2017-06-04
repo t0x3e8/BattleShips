@@ -83,6 +83,7 @@ Board.prototype.init = function (player1, player2) {
  */
 Board.prototype.setPawnsOnFields = function (pawns, player) {
     'use strict'
+
     var that = this;
 
     _.each(pawns, function (pawn) {
@@ -109,10 +110,7 @@ Board.prototype.processTurn = function (player1, player2) {
     that.processMoveAndCombat(player1);
     that.processMoveAndCombat(player2);
 
-    // set pawnsSet1 to oldPawnsSet1
-    // set pawnsSet2 to oldPawnsSet2
-
-    return this.determineGameResult();
+    return this.determineGameResult(player1, player2);
 }
 
 /**
@@ -130,7 +128,6 @@ Board.prototype.processMoveAndCombat = function (player) {
 
     _.each(player.movedPawns, function (currentPawn) {
         if (currentPawn.col !== undefined && currentPawn.row !== undefined) {
-
             targetPawn = that.fields[currentPawn.col][currentPawn.row].pawn;
             if (targetPawn) {
                 // this is a Combat            
@@ -138,17 +135,17 @@ Board.prototype.processMoveAndCombat = function (player) {
                 combatResult = combat.process(currentPawn.type, targetPawn.type);
 
                 if (combatResult === -1) {
-                    // attacker lost: pawn location is set to undefined and the field on board is empty
+                    // the attacker lost: pawn's location is set to undefined and the field on board is empt
                     that.fields[currentPawn.oldCol][currentPawn.oldRow].pawn = null;
                     currentPawn.updatePosition(undefined, undefined);
                 } else if (combatResult === 0) {
-                    // attacker & defender lost: pawns location are set to undefined and fields on board are empty
+                    // attacker and defender lost: pawns' location are set to undefined and fields on board are empty
                     that.fields[currentPawn.col][currentPawn.row].pawn = null;
                     that.fields[currentPawn.oldCol][currentPawn.oldRow].pawn = null;
                     currentPawn.updatePosition(undefined, undefined);
                     targetPawn.updatePosition(undefined, undefined);
                 } else if (combatResult === 1) {
-                    // defender lost: pawn location is set to undefined and the field on board is empty
+                    // the defender lost: pawn's location is set to undefined and the field on board is empty
                     that.fields[currentPawn.col][currentPawn.row].pawn = currentPawn;
                     currentPawn.updatePosition(currentPawn.col, currentPawn.row);
                     targetPawn.updatePosition(undefined, undefined);
@@ -164,11 +161,19 @@ Board.prototype.processMoveAndCombat = function (player) {
 
 /**
  * Once completed movements the game status is checked.
+ * @param {Player} player1 Player number 1
+ * @param {Player} player2 Player number 2
  * @return {number} Unresolved: 0; Player1 wins: 1; Player2 wins: 2
  *  */
-Board.prototype.determineGameResult = function () {
+Board.prototype.determineGameResult = function (player1, player2) {
     'use strict';
-    
+
+    if (player1.pawns.length === 0) {
+        return 2;
+    } else if (player2.pawns.length === 0) {
+        return 1;
+    }
+
     return 0;
 }
 
