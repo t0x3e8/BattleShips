@@ -21,7 +21,7 @@
     "less-middleware": "^2.2.1",
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.0",
-    "underscore": "^1.9.1",
+    "underscore": "^1.12.1",
     "uuid": "^3.3.2",
     "vue": "^2.5.17",
     "vuetify": "^1.2.4"
