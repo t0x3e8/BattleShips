@@ -31,7 +31,7 @@
     "eslint": "^3.19.0",
     "mocha": "^3.5.3",
     "node-sass": "^4.9.3",
-    "sass-loader": "^7.1.0",
+    "sass-loader": "^13.2.0",
     "sinon": "^1.17.7"
   },
   "browserslist": [
